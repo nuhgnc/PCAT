@@ -17,8 +17,8 @@ app.get('/about', (req, res) => {
   res.render('about');
 });
 
-app.get('/contact', (req, res) => {
-  res.render('contact');
+app.get('/add', (req, res) => {
+  res.render('add');
 });
 
 const port = 3000;
