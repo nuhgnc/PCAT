@@ -1,9 +1,15 @@
 const express = require('express');
 const path = require('path');
-const ejs = require('ejs'); //view engine
+const ejs = require('ejs');
+const mongoose = require('mongoose')
+const photo = require('./models/Photo') // oluşturduğum schemayı aldım
 
 
 const app = express();
+
+
+//Database connect
+mongoose.connect('mongodb://localhost/pcat-test-db')
 
 //VİEW ENGİNE
 app.set('view engine', 'ejs');
@@ -14,8 +20,10 @@ app.use(express.urlencoded({ extended: true })); // Body parser
 app.use(express.json()); // Body parser
 
 //ROUTES
-app.get('/', (req, res) => {
-  res.render('index');
+app.get('/', async (req, res) => {
+  const photos = await photo.find({});
+  res.render('index', { photos });
+  console.log(photos)
 });
 app.get('/about', (req, res) => {
   res.render('about');
@@ -25,10 +33,12 @@ app.get('/add', (req, res) => {
   res.render('add');
 });
 
-app.post('/photos', (req, res) => {
-  console.log(req.body);
+app.post('/photos', async (req, res) => {
+  await photo.create(req.body)
   res.redirect('/');
 });
+
+
 
 const port = 3000;
 app.listen(port, () => {
