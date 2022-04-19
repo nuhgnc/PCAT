@@ -23,8 +23,8 @@ app.use(express.json()); // Body parser
 app.get('/', async (req, res) => {
   const photos = await photo.find({});
   res.render('index', { photos });
-  console.log(photos)
 });
+
 app.get('/about', (req, res) => {
   res.render('about');
 });
@@ -32,6 +32,20 @@ app.get('/about', (req, res) => {
 app.get('/add', (req, res) => {
   res.render('add');
 });
+
+  app.get('/photo/:photo_id', async (req,res) =>{
+  const foundedPhoto = await photo.findById(req.params.photo_id)
+  res.render('photo', {photo:foundedPhoto})
+})  
+
+/*  app.get('/photo', (req,res) =>{
+  res.render('photo',{photo: {
+    title: 'nuh',
+    description: 'deneme',
+    image: 'asdasd.jps'
+  }})
+})  */
+
 
 app.post('/photos', async (req, res) => {
   await photo.create(req.body)

@@ -6,7 +6,6 @@
             <div class="position-absolute tm-site-header">
                 <div class="container-fluid position-relative">
                     <div class="row">
-                       
 
                         <%- include('partials/_navbar.ejs') %>
                     </div>
@@ -59,7 +58,7 @@
                                 <div class="col-lg-4 col-md-6 col-sm-12 tm-catalog-item">
                                     <div class="position-relative tm-thumbnail-container">
                                         <img src="<%= element.image %> " alt="Image" class="img-fluid tm-catalog-item-img">    
-                                        <a href="video-page.html" class="position-absolute tm-img-overlay">
+                                        <a href="/photo/<%= element._id %> " class="position-absolute tm-img-overlay">
                                             <i class="fas fa-play tm-overlay-icon"></i>
                                         </a>
                                     </div>    
