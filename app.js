@@ -2,6 +2,7 @@ const express = require('express');
 const ejs = require('ejs');
 const mongoose = require('mongoose');
 const fileUpload = require('express-fileupload');
+const methodOverride = require('method-override');
 
 const path = require('path');
 const fs = require('fs');
@@ -21,6 +22,7 @@ app.use(express.static('public')); // Static dosyaları koyacağımız klasörü
 app.use(express.urlencoded({ extended: true })); // Body parser
 app.use(express.json()); // Body parser
 app.use(fileUpload());
+app.use(methodOverride('_method'));
 
 //ROUTES
 app.get('/', async (req, res) => {
@@ -41,6 +43,27 @@ app.get('/photo/:photo_id', async (req, res) => {
   res.render('photo', { photo: foundedPhoto });
 });
 
+app.get('/photo/edit/:photo_id', async (req, res) => {
+  const foundedPhoto = await photo.findById(req.params.photo_id);
+  res.render('edit', { photo: foundedPhoto });
+});
+
+app.put('/photo/:photo_id', async (req, res) => {
+  const foundedPhoto = await photo.findByIdAndUpdate(req.params.photo_id);
+
+  // Yeni fotoğrafı upload et
+  let uploadeImage = req.files.image;
+  let uploadPath = __dirname + '/public/uploads/' + uploadeImage.name;
+  uploadeImage.mv(uploadPath, async (err) => {
+    if (err) console.log(err);
+    foundedPhoto.image = '/uploads/' + uploadeImage.name;
+    foundedPhoto.title = req.body.title;
+    foundedPhoto.description = req.body.description;
+    foundedPhoto.save();
+    res.redirect(`/photo/${req.params.photo_id}`);
+  });
+});
+
 app.post('/photos', async (req, res) => {
   //Eğer klasör yoksa oluşturacak
   const uploadDir = 'public/uploads';
@@ -53,7 +76,7 @@ app.post('/photos', async (req, res) => {
 
   // Yakaladığımız dosyayı .mv metodu ile yukarda belirlediğimiz path'a taşıyoruz. Dosya taşıma işlemi sırasında hata olmadı ise req.body ve içerisindeki image'nin dosya yolu ve adıyla beraber database kaydediyoruz
   uploadeImage.mv(uploadPath, async (err) => {
-    if (err) console.log(err);    // Bu kısımda önemli olan add.ejs'nin içerisine form elemanı olarak encType="multipart/form-data" atribute eklemek
+    if (err) console.log(err); // Bu kısımda önemli olan add.ejs'nin içerisine form elemanı olarak encType="multipart/form-data" atribute eklemek
     await photo.create({
       ...req.body,
       image: '/uploads/' + uploadeImage.name,
