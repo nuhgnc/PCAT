@@ -22,7 +22,7 @@ app.use(express.static('public')); // Static dosyaları koyacağımız klasörü
 app.use(express.urlencoded({ extended: true })); // Body parser
 app.use(express.json()); // Body parser
 app.use(fileUpload());
-app.use(methodOverride('_method'));
+app.use(methodOverride('_method', { methods: ['POST','GET'] } ));
 
 //ROUTES
 app.get('/', async (req, res) => {
@@ -64,6 +64,8 @@ app.put('/photo/:photo_id', async (req, res) => {
   });
 });
 
+
+
 app.post('/photos', async (req, res) => {
   //Eğer klasör yoksa oluşturacak
   const uploadDir = 'public/uploads';
@@ -84,6 +86,15 @@ app.post('/photos', async (req, res) => {
   });
   res.redirect('/');
 });
+
+ app.delete('/photo/:photo_id', async (req,res) => {
+  const foundedPhoto = await photo.findOne({_id: req.params.photo_id})
+  const imagepath = foundedPhoto.image
+  fs.unlinkSync('public'+ imagepath)
+  await photo.findByIdAndDelete(req.params.photo_id)
+  res.redirect('/')
+}) 
+
 
 const port = 3000;
 app.listen(port, () => {
