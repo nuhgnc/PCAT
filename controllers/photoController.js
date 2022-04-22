@@ -3,8 +3,21 @@ const photo = require('../models/Photo'),
   fs = require('fs');
 
 exports.getAllPhotos = async (req, res) => {
-  const photos = await photo.find({});
-  res.render('index', { photos });
+  const page = req.query.page || 1  // urldeki parametreyi alıyoruz
+  const photoPerPage = 3  // sayfa başına kaç fotoğraf olduğunu belirtiyoruz
+  const totalPhotos = await photo.find().countDocuments();  // Database'de kayıtlı olan tüm fotoğrafların sayısını alıyoruz
+
+  const photos = await photo.find({}) // Tüm fotoğrafları alıyoruz
+    .sort('-dateCreated') // Yüklenme tarihine göre sıralıyoruz
+    .skip( (page - 1) * photoPerPage )  // url'den aldığımız sayfa sayısından 1(bi önceki sayfa) çıkartıp, her sayfada kaç fotoğraf olacaksa onla çarpıyoruz
+    .limit(photoPerPage); // Kaç adet veri gösterileceğini pelirtiyoruz
+
+  res.render('index', { 
+    photos: photos,
+    currentPage:page,
+    totalPage: Math.ceil(totalPhotos  / photoPerPage ),
+    totalPhotos: totalPhotos  // toplam fotoğraf sayısını, her sayfada gözükecek olan fotoğraf sayısına bölerek toplam sayfa sayınıaelde ediyoruz. ondalık sayı çıkarsa diye en yakın onluğa yuvarlıyoruz
+   });
 };
 
 exports.getPhotoPage = async (req, res) => {
@@ -56,8 +69,8 @@ exports.photoUpload = async (req, res) => {
 
 exports.photoDelete = async (req, res) => {
   const foundedPhoto = await photo.findOne({ _id: req.params.photo_id });
-  const imagepath = __dirname + '/../public' + foundedPhoto.image;
-  fs.unlinkSync(imagepath);
+  const imagepath = __dirname + '/../public' + foundedPhoto.image
+  if (fs.existsSync(imagepath)) fs.unlinkSync(imagepath)
   await photo.findByIdAndDelete(req.params.photo_id);
   res.redirect('/');
 };

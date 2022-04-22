@@ -75,16 +75,30 @@
                         
             
                     </div>
-
+                    
                     <!-- Catalog Paging Buttons -->
                     <div>
-                        <ul class="nav tm-paging-links">
-                            <li class="nav-item active"><a href="#" class="nav-link tm-paging-link">1</a></li>
-                            <li class="nav-item"><a href="#" class="nav-link tm-paging-link">2</a></li>
-                            <li class="nav-item"><a href="#" class="nav-link tm-paging-link">3</a></li>
-                            <li class="nav-item"><a href="#" class="nav-link tm-paging-link">4</a></li>
-                            <li class="nav-item"><a href="#" class="nav-link tm-paging-link">></a></li>
-                        </ul>
+                        <% if (totalPage > 0 ) { %> <!-- Toplam sayfa sayısı 0'dan büyük ise aşağıdakileri yap -->
+                            
+                            <ul class="nav tm-paging-links">
+
+                                <% for( let i = 1; i <= totalPage; i++ ) { %> <!-- Toplam sayfa sayfa sayısına ulaşana kadar sayfa butonunu 1 arttır-->
+                                    <% if (currentPage == i ) { %> <!-- eğer ki url'deki sayfa saysı, for döngüsündeki sayısa eşit ise active class'lı olanı göster -->
+
+                                            <li class="nav-item active"><a href="/?page=<%= i %>" class="nav-link tm-paging-link"><%= i %> </a></li>
+
+                                    <% } else if ( i <= 18 ) { %>  <!-- Eğer şuan ki sayfa sayısı 18'den küçük veya eşit ise sadece 18 tane (sayfaya bu kadar sığıyor) sayfa numarası göster -->
+                                        
+                                            <li class="nav-item"><a href="/?page=<%= i %>" class="nav-link tm-paging-link"><%= i  %> </a></li>
+                                        <% }  %>  
+                                <% } %>
+                                        <% if (currentPage < totalPage) { %> <!-- Eğer şuan ki sayfa toplam sayfa sayısından küçük ise sayfa butonlarının yanına last butonu koy-->
+                                            
+                                            <li class="nav-item"><a href="/?page=<%= totalPage %>"  class="nav-link tm-paging-link"> last </a></li>
+                                        <% } %>
+                            </ul>
+                        <% } %>
+                        
                     </div>
                 </main>
 
