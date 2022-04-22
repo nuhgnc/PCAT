@@ -11,7 +11,10 @@ const photo = require('./models/Photo'), // oluşturduğum schemayı aldım
 const app = express();
 
 //Database connect
-mongoose.connect('mongodb://localhost/pcat-test-db');
+mongoose
+.connect('mongodb+srv://nuhgnc:nuh163gnc@pcat-app.9enuy.mongodb.net/pcatAapp-heroku?retryWrites=true&w=majority')
+.then( response =>{ console.log(response + '\nDB CONNECTED')})
+.catch( err => console.log(err + '\nDB CONNECTİON ERROR'))
 
 //VİEW ENGİNE
 app.set('view engine', 'ejs');
@@ -34,7 +37,7 @@ app.delete('/photo/:photo_id', photoController.photoDelete);
 app.get('/about', pageController.getAboutPage);
 app.get('/add', pageController.getAddPage);
 
-const port = 3000;
+const port = process.env.PORT || 5000;
 app.listen(port, () => {
   console.log(`Server ${port} portunda dinleniyor`);
 });
