@@ -12,7 +12,7 @@ const app = express();
 
 //Database connect
 mongoose
-.connect('mongodb+srv://nuhgnc:nuh163gnc@pcat-app.9enuy.mongodb.net/pcatAapp-heroku?retryWrites=true&w=majority')
+.connect('mongodb+srv://<username>:<password>@pcat-app.9enuy.mongodb.net/pcatAapp-heroku?retryWrites=true&w=majority')
 .then( response =>{ console.log(response + '\nDB CONNECTED')})
 .catch( err => console.log(err + '\nDB CONNECTİON ERROR'))
 
